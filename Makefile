@@ -1,23 +1,19 @@
+TF=terraform
+
 init:
-	terraform init
+	$(TF) init -reconfigure
 
 validate:
-	terraform validate
+	$(TF) validate
 
-plan:
-	terraform plan
+plan: validate init
+	$(TF) plan -out=tfplan
 
-apply:
-	make plan
-	make validate
-	make init
-	terraform apply -auto-approve
+apply: plan
+	$(TF) apply -auto-approve tfplan
 
-plan-destroy:
-	terraform plan -destroy
+destroy: init
+	$(TF) destroy -auto-approve
 
-destroy:
-	make plan-destroy
-	make validate
-	make init
-	terraform destroy -auto-approve
+fmt:
+	$(TF) fmt -recursive
